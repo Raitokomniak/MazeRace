@@ -45,6 +45,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Environment\Cell.cs" />
+     <Compile Include="Assets\Scripts\Environment\MazeGenerator.cs" />
      <Compile Include="Assets\Scripts\GameControl.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
