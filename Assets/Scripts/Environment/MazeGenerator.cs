@@ -21,6 +21,7 @@ public class MazeGenerator : MonoBehaviour {
 	int backingUp = 0;
 	int wallToBreak;
 
+	public int trapAmountMultiplier;
 	int[] traps;
 
 	// Use this for initialization
@@ -131,7 +132,10 @@ public class MazeGenerator : MonoBehaviour {
 	// TRAPS
 	//////////////////////
 	void CreateTraps(){
-		traps = new int[Mathf.RoundToInt(xSize / 2)];
+		if (trapAmountMultiplier == 0)
+			trapAmountMultiplier = 1;
+		
+		traps = new int[Mathf.RoundToInt(xSize / 2) * trapAmountMultiplier];
 		for (int i = 0; i < traps.Length; i++) {
 
 			GameObject trapMarker = Instantiate (Resources.Load ("TrapMarker")) as GameObject;
