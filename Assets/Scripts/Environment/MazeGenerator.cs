@@ -39,6 +39,7 @@ public class MazeGenerator : MonoBehaviour {
 		floor.transform.position = initialPos + new Vector3(xSize / 2f, -.5f, ySize / 2f);
 		GameObject tempWall;
 		bool exit = false;
+		bool spawnPoint = false;
 
 		//X axis
 		for (int i = 0; i < ySize; i++) {
@@ -50,8 +51,8 @@ public class MazeGenerator : MonoBehaviour {
 					GameObject exitMarker = Instantiate (Resources.Load ("ExitMarker"), tempWall.transform.position, Quaternion.identity) as GameObject;
 					Destroy (tempWall);
 					exit = true;
-
 				}
+				CreateSpawnPoints (i, j, tempWall);
 			}
 		}
 
@@ -65,6 +66,19 @@ public class MazeGenerator : MonoBehaviour {
 		}
 
 		CreateCells ();
+	}
+
+	void CreateSpawnPoints(int i, int j, GameObject tempWall)
+	{
+		if (i == ySize - 1 && j == xSize) {
+			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+		}
+		else if (i == 0 && j == xSize) {
+			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+		}
+		else if (i == ySize - 1 && j == 0) {
+			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+		}
 	}
 
 	void CreateCells(){
