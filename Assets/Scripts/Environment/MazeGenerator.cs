@@ -3,6 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 public class MazeGenerator : MonoBehaviour {
 
+	static Random.State seedGenerator;
+	public int seed = 1337;
+	static bool seedGeneratorInit = false;
+
+
 	public GameObject wall;
 	public GameObject floor;
 	public float wallLength = 1f;
@@ -28,8 +33,37 @@ public class MazeGenerator : MonoBehaviour {
 	void Start () {
 
 		//Muuta tämä sitten triggeröitymään eri paikasta kun peli alkaa
+		Random.InitState (seed);
 		CreateWalls ();
+
+		//seedGeneratorSeed = GenerateSeed ();
 	}
+
+	/*
+	public int GenerateSeed(){
+		// remember old seed
+		var temp = Random.state;
+
+		// initialize generator state if needed
+		if (!seedGeneratorInit)
+		{
+			Random.InitState(seedGeneratorSeed);
+			seedGenerator = Random.state;
+			seedGeneratorInit = true;
+		}
+
+		// set our generator state to the seed generator
+		Random.state = seedGenerator;
+		// generate our new seed
+		var generatedSeed = Random.Range(int.MinValue, int.MaxValue);
+		// remember the new generator state
+		seedGenerator = Random.state;
+		// set the original state back so that normal random generation can continue where it left off
+		Random.state = temp;
+
+		return generatedSeed;
+	}*/
+
 
 	void CreateWalls(){
 		initialPos = new Vector3 ((-xSize / 2) + wallLength/2, 0, (-ySize/2)+wallLength/2);
@@ -46,6 +80,7 @@ public class MazeGenerator : MonoBehaviour {
 			for (int j = 0; j <= xSize; j++) {
 				myPos = new Vector3 (initialPos.x + (j * wallLength) - wallLength / 2, 0, initialPos.z + (i * wallLength) - wallLength / 2);
 				tempWall = Instantiate (wall, myPos, Quaternion.identity) as GameObject;
+				tempWall.transform.localScale = new Vector3 (.15f, 2, 1);
 				tempWall.transform.SetParent (wallHolder.transform);
 				if (j == 0 && !exit) {
 					GameObject exitMarker = Instantiate (Resources.Load ("ExitMarker"), tempWall.transform.position, Quaternion.identity) as GameObject;
@@ -62,6 +97,7 @@ public class MazeGenerator : MonoBehaviour {
 				myPos = new Vector3 (initialPos.x + (j * wallLength), 0, initialPos.z + (i * wallLength) - wallLength);
 				tempWall = Instantiate (wall, myPos, Quaternion.Euler(0,90,0)) as GameObject;
 				tempWall.transform.SetParent (wallHolder.transform);
+				tempWall.transform.localScale = new Vector3 (.15f, 2, 1);
 			}
 		}
 
