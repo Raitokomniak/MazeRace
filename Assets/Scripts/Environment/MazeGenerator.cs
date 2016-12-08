@@ -20,6 +20,9 @@ public class MazeGenerator : MonoBehaviour {
 	List<int> lastCells;
 	int backingUp = 0;
 	int wallToBreak;
+
+	int[] traps;
+
 	// Use this for initialization
 	void Start () {
 
@@ -121,6 +124,34 @@ public class MazeGenerator : MonoBehaviour {
 		}
 
 
+		CreateTraps ();
+	}
+
+	//////////////////////
+	// TRAPS
+	//////////////////////
+	void CreateTraps(){
+		traps = new int[Mathf.RoundToInt(xSize / 2)];
+		for (int i = 0; i < traps.Length; i++) {
+
+			GameObject trapMarker = Instantiate (Resources.Load ("TrapMarker")) as GameObject;
+
+			while (CheckExistingTraps (i) == false) {
+
+			}
+			trapMarker.transform.position = cells [traps[i]].north.transform.position;
+		}
+	}
+
+	bool CheckExistingTraps(int index){
+		int randomCell = Random.Range (1, cells.Length);
+		for (int j = 0; j < traps.Length; j++) {
+			if (traps [j] == randomCell) {
+				return false;
+			}
+		}
+		traps [index] = randomCell;
+		return true;
 	}
 
 	void BreakWall(){
