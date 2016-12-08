@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class MazeGenerator : MonoBehaviour {
 
 	public GameObject wall;
+	public GameObject floor;
 	public float wallLength = 1f;
 	public float xSize = 5f;
 	public float ySize = 5f;
@@ -29,7 +30,11 @@ public class MazeGenerator : MonoBehaviour {
 	void CreateWalls(){
 		initialPos = new Vector3 ((-xSize / 2) + wallLength/2, 0, (-ySize/2)+wallLength/2);
 		Vector3 myPos = initialPos;
+		float floorMultiplier;
+		floor.transform.localScale = new Vector3 (xSize / 8, 1, ySize / 8);
+		floor.transform.position = initialPos + new Vector3(xSize / 2f, -.5f, ySize / 2f);
 		GameObject tempWall;
+		bool exit = false;
 
 		//X axis
 		for (int i = 0; i < ySize; i++) {
@@ -37,6 +42,12 @@ public class MazeGenerator : MonoBehaviour {
 				myPos = new Vector3 (initialPos.x + (j * wallLength) - wallLength / 2, 0, initialPos.z + (i * wallLength) - wallLength / 2);
 				tempWall = Instantiate (wall, myPos, Quaternion.identity) as GameObject;
 				tempWall.transform.SetParent (wallHolder.transform);
+				if (j == 0 && !exit) {
+					GameObject exitMarker = Instantiate (Resources.Load ("ExitMarker"), tempWall.transform.position, Quaternion.identity) as GameObject;
+					Destroy (tempWall);
+					exit = true;
+
+				}
 			}
 		}
 
@@ -107,8 +118,9 @@ public class MazeGenerator : MonoBehaviour {
 				visitedCells++;
 				startedBuilding = true;
 			}
-
 		}
+
+
 	}
 
 	void BreakWall(){
