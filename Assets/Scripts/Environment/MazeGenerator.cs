@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+
 public class MazeGenerator : MonoBehaviour {
 
 	static Random.State seedGenerator;
@@ -9,7 +11,8 @@ public class MazeGenerator : MonoBehaviour {
 
 
 	public GameObject wall;
-	public GameObject floor;
+	public GameObject floorTile;
+	public GameObject floorHolder;
 	public float wallLength = 1f;
 	public float xSize = 5f;
 	public float ySize = 5f;
@@ -33,10 +36,17 @@ public class MazeGenerator : MonoBehaviour {
 	void Start () {
 
 		//Muuta tämä sitten triggeröitymään eri paikasta kun peli alkaa
+
+		StartGeneration ();
+		//seedGeneratorSeed = GenerateSeed ();
+	}
+
+	public void StartGeneration(){
+		GameControl.gameControl.ui.ToggleGameSetup (false);
+
+		//SceneManager.LoadScene ("MazeLevel");
 		Random.InitState (seed);
 		CreateWalls ();
-
-		//seedGeneratorSeed = GenerateSeed ();
 	}
 
 	/*
@@ -67,21 +77,28 @@ public class MazeGenerator : MonoBehaviour {
 
 	void CreateWalls(){
 		initialPos = new Vector3 ((-xSize / 2) + wallLength/2, 0, (-ySize/2)+wallLength/2);
+		Vector3 initialFloorPos = new Vector3 (6f, -1.3f, 15.25f);
 		Vector3 myPos = initialPos;
-		float floorMultiplier;
-		floor.transform.localScale = new Vector3 (xSize / 8, 1, ySize / 8);
-		floor.transform.position = initialPos + new Vector3(xSize / 2f, -.5f, ySize / 2f);
+		Vector3 myFloorPos = initialFloorPos;
+
 		GameObject tempWall;
+		GameObject tempFloor;
 		bool exit = false;
-		bool spawnPoint = false;
 
 		//X axis
 		for (int i = 0; i < ySize; i++) {
 			for (int j = 0; j <= xSize; j++) {
 				myPos = new Vector3 (initialPos.x + (j * wallLength) - wallLength / 2, 0, initialPos.z + (i * wallLength) - wallLength / 2);
+
+				myFloorPos = new Vector3(initialPos.x + (j* wallLength) - wallLength, 0, initialPos.z + (i * wallLength) - wallLength / 2);
 				tempWall = Instantiate (wall, myPos, Quaternion.identity) as GameObject;
-				tempWall.transform.localScale = new Vector3 (.15f, 2, 1);
 				tempWall.transform.SetParent (wallHolder.transform);
+
+				if (j != 0) {
+					tempFloor = Instantiate (floorTile, myFloorPos, Quaternion.identity) as GameObject;
+					tempFloor.transform.SetParent (floorHolder.transform);
+				}
+
 				if (j == 0 && !exit) {
 					GameObject exitMarker = Instantiate (Resources.Load ("ExitMarker"), tempWall.transform.position, Quaternion.identity) as GameObject;
 					Destroy (tempWall);
@@ -97,7 +114,7 @@ public class MazeGenerator : MonoBehaviour {
 				myPos = new Vector3 (initialPos.x + (j * wallLength), 0, initialPos.z + (i * wallLength) - wallLength);
 				tempWall = Instantiate (wall, myPos, Quaternion.Euler(0,90,0)) as GameObject;
 				tempWall.transform.SetParent (wallHolder.transform);
-				tempWall.transform.localScale = new Vector3 (.15f, 2, 1);
+				//tempWall.transform.localScale = new Vector3 (.15f, 2, 1);
 			}
 		}
 
