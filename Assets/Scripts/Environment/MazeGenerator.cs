@@ -8,17 +8,17 @@ public class MazeGenerator : MonoBehaviour {
 	static Random.State seedGenerator;
 	public int seed = 1337;
 	static bool seedGeneratorInit = false;
-
+	public int playerCount;
 
 	public GameObject wall;
 	public GameObject floorTile;
-	public GameObject floorHolder;
+	GameObject floorHolder;
 	public float wallLength = 1f;
 	public float xSize = 5f;
 	public float ySize = 5f;
 
 	Vector3 initialPos;
-	public GameObject wallHolder;
+	GameObject wallHolder;
 	public Cell[] cells;
 	public int currentCell = 0;
 	int totalCells;
@@ -37,42 +37,42 @@ public class MazeGenerator : MonoBehaviour {
 
 		//Muuta tämä sitten triggeröitymään eri paikasta kun peli alkaa
 
-		StartGeneration ();
+
 		//seedGeneratorSeed = GenerateSeed ();
 	}
 
+	void Awake(){
+		if (SceneManager.GetActiveScene ().name == "GameSetupScene") {
+			GenerateSeed ();
+		}
+	}
 	public void StartGeneration(){
-		GameControl.gameControl.ui.ToggleGameSetup (false);
+		
+		StartCoroutine (Load ());
 
-		//SceneManager.LoadScene ("MazeLevel");
+	}
+	IEnumerator Load(){
 		Random.InitState (seed);
+		xSize = float.Parse (GameControl.gameControl.ui.sizeXInput.text);
+		ySize = float.Parse (GameControl.gameControl.ui.sizeYInput.text);
+
+		playerCount = GameControl.gameControl.ui.playerCountSelection.value + 1;
+		Debug.Log (playerCount + " players");
+
+		AsyncOperation loadScene = SceneManager.LoadSceneAsync ("MazeLevel");
+		yield return loadScene;
+
 		CreateWalls ();
 	}
 
-	/*
-	public int GenerateSeed(){
-		// remember old seed
-		var temp = Random.state;
 
-		// initialize generator state if needed
-		if (!seedGeneratorInit)
-		{
-			Random.InitState(seedGeneratorSeed);
-			seedGenerator = Random.state;
-			seedGeneratorInit = true;
-		}
 
-		// set our generator state to the seed generator
-		Random.state = seedGenerator;
-		// generate our new seed
+	public void GenerateSeed(){
 		var generatedSeed = Random.Range(int.MinValue, int.MaxValue);
-		// remember the new generator state
 		seedGenerator = Random.state;
-		// set the original state back so that normal random generation can continue where it left off
-		Random.state = temp;
-
-		return generatedSeed;
-	}*/
+		seed = generatedSeed;
+		GameControl.gameControl.ui.UpdateSeedInput ();
+	}
 
 
 	void CreateWalls(){
@@ -80,6 +80,9 @@ public class MazeGenerator : MonoBehaviour {
 		Vector3 initialFloorPos = new Vector3 (6f, -1.3f, 15.25f);
 		Vector3 myPos = initialPos;
 		Vector3 myFloorPos = initialFloorPos;
+
+		wallHolder = GameObject.Find ("Walls");
+		floorHolder = GameObject.Find ("FloorTiles");
 
 		GameObject tempWall;
 		GameObject tempFloor;
@@ -123,13 +126,13 @@ public class MazeGenerator : MonoBehaviour {
 
 	void CreateSpawnPoints(int i, int j, GameObject tempWall)
 	{
-		if (i == ySize - 1 && j == xSize) {
+		if (i == ySize - 1 && j == xSize && playerCount >= 1) {
 			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
 		}
-		else if (i == 0 && j == xSize) {
+		else if (i == 0 && j == xSize && playerCount >= 2) {
 			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
 		}
-		else if (i == ySize - 1 && j == 0) {
+		else if (i == ySize - 1 && j == 0 && playerCount >= 3) {
 			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
 		}
 	}
