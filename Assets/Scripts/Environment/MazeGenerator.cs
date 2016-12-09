@@ -38,7 +38,7 @@ public class MazeGenerator : MonoBehaviour {
 		//Muuta tämä sitten triggeröitymään eri paikasta kun peli alkaa
 		if (SceneManager.GetActiveScene ().name == "GameSetupScene") {
 			GenerateSeed ();
-			StartGeneration ();
+			//StartGeneration ();
 		} else {
 			StartDebugGeneration ();
 		}
