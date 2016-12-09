@@ -36,8 +36,12 @@ public class MazeGenerator : MonoBehaviour {
 	void Start () {
 
 		//Muuta tämä sitten triggeröitymään eri paikasta kun peli alkaa
-
-
+		if (SceneManager.GetActiveScene ().name == "GameSetupScene") {
+			GenerateSeed ();
+			StartGeneration ();
+		} else {
+			StartDebugGeneration ();
+		}
 		//seedGeneratorSeed = GenerateSeed ();
 	}
 
@@ -46,6 +50,15 @@ public class MazeGenerator : MonoBehaviour {
 			GenerateSeed ();
 		}
 	}
+
+	public void StartDebugGeneration(){
+		Random.InitState (seed);
+
+		playerCount = 3;
+		Debug.Log (playerCount + " players");
+		CreateWalls ();
+	}
+
 	public void StartGeneration(){
 		
 		StartCoroutine (Load ());
