@@ -9,6 +9,8 @@ public class MazeGenerator : MonoBehaviour {
 	public int seed = 1337;
 	static bool seedGeneratorInit = false;
 	public int playerCount;
+	public ArrayList spawnPoints;
+	public GameObject AIPlayer;
 
 	public GameObject wall;
 	public GameObject floorTile;
@@ -54,7 +56,6 @@ public class MazeGenerator : MonoBehaviour {
 	public void StartDebugGeneration(){
 		Random.InitState (seed);
 
-		playerCount = 3;
 		Debug.Log (playerCount + " players");
 		CreateWalls ();
 	}
@@ -71,6 +72,7 @@ public class MazeGenerator : MonoBehaviour {
 
 		playerCount = GameControl.gameControl.ui.playerCountSelection.value + 1;
 		Debug.Log (playerCount + " players");
+
 
 		AsyncOperation loadScene = SceneManager.LoadSceneAsync ("MazeLevel");
 		yield return loadScene;
@@ -109,6 +111,7 @@ public class MazeGenerator : MonoBehaviour {
 				myFloorPos = new Vector3(initialPos.x + (j* wallLength) - wallLength, 0, initialPos.z + (i * wallLength) - wallLength / 2);
 				tempWall = Instantiate (wall, myPos, Quaternion.identity) as GameObject;
 				tempWall.transform.SetParent (wallHolder.transform);
+				tempWall.tag = "Wall";
 
 				if (j != 0) {
 					tempFloor = Instantiate (floorTile, myFloorPos, Quaternion.identity) as GameObject;
@@ -124,6 +127,9 @@ public class MazeGenerator : MonoBehaviour {
 			}
 		}
 
+
+
+
 		//Y axis
 		for (int i = 0; i <= ySize; i++) {
 			for (int j = 0; j < xSize; j++) {
@@ -133,22 +139,57 @@ public class MazeGenerator : MonoBehaviour {
 				//tempWall.transform.localScale = new Vector3 (.15f, 2, 1);
 			}
 		}
-
+		CreateAIPlayers ();
 		CreateCells ();
 	}
 
-	void CreateSpawnPoints(int i, int j, GameObject tempWall)
-	{
-		if (i == ySize - 1 && j == xSize && playerCount >= 1) {
-			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
-		}
-		else if (i == 0 && j == xSize && playerCount >= 2) {
-			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
-		}
-		else if (i == ySize - 1 && j == 0 && playerCount >= 3) {
-			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+	void CreateAIPlayers(){
+		ArrayList AIs = new ArrayList ();
+		if (playerCount == 1) {
+			for (int i = 1; i < 3; i++) {
+				Vector3 spawnPoint = (Vector3)spawnPoints [i];
+				GameObject _AIPlayer = (GameObject)Instantiate (AIPlayer, spawnPoint, Quaternion.LookRotation (Vector3.right));
+				_AIPlayer.name = "AI" + i;
+				if(i == 1) _AIPlayer.transform.position += new Vector3 (1, 1, 0);
+				else if(i == 2) _AIPlayer.transform.position -= new Vector3 (1, -1, 0);
+				AIs.Add (_AIPlayer);
+			}
+
+
+		} else if (playerCount == 2) {
+			Vector3 spawnPoint = (Vector3)spawnPoints [1];
+			GameObject AIPlayer1 = (GameObject)Instantiate (AIPlayer, spawnPoint, Quaternion.identity);
+			AIPlayer1.name = "AI1";
 		}
 	}
+
+
+	void CreateSpawnPoints(int i, int j, GameObject tempWall)
+	{
+		if (spawnPoints == null) {
+			spawnPoints = new ArrayList ();
+		}
+
+		if (i == ySize - 1 && j == xSize) {
+			
+			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+			spawnPoints.Add(_spawnPoint.transform.position);
+		}
+		else if (i == 0 && j == xSize) {
+			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+			spawnPoints.Add(_spawnPoint.transform.position);
+		}
+		else if (i == ySize - 1 && j == 0) {
+			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+			spawnPoints.Add(_spawnPoint.transform.position);
+
+
+		}
+
+
+
+	}
+
 
 	void CreateCells(){
 		lastCells = new List<int>();
@@ -186,6 +227,8 @@ public class MazeGenerator : MonoBehaviour {
 	}
 
 	void CreateMaze(){
+		
+
 		while (visitedCells < totalCells) {
 			if (startedBuilding) {
 				GiveMeNeighbour ();
@@ -209,6 +252,7 @@ public class MazeGenerator : MonoBehaviour {
 
 
 		CreateTraps ();
+	
 	}
 
 	//////////////////////
