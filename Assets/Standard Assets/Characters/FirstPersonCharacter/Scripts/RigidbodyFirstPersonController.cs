@@ -1,15 +1,16 @@
 using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
+using UnityEngine.Networking;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
     [RequireComponent(typeof (Rigidbody))]
     [RequireComponent(typeof (CapsuleCollider))]
-    public class RigidbodyFirstPersonController : MonoBehaviour
+	public class RigidbodyFirstPersonController : MonoBehaviour
     {
         [Serializable]
-        public class MovementSettings
+		public class MovementSettings 
         {
             public float ForwardSpeed = 8.0f;   // Speed when walking forward
             public float BackwardSpeed = 4.0f;  // Speed when walking backwards
@@ -26,6 +27,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             public void UpdateDesiredTargetSpeed(Vector2 input)
             {
+				
+
 	            if (input == Vector2.zero) return;
 				if (input.x > 0 || input.x < 0)
 				{
@@ -66,7 +69,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 
         [Serializable]
-        public class AdvancedSettings
+		public class AdvancedSettings 
         {
             public float groundCheckDistance = 0.01f; // distance for checking if the controller is grounded ( 0.01f seems to work best for this )
             public float stickToGroundHelperDistance = 0.5f; // stops the character
@@ -128,6 +131,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void Update()
         {
+
+
             RotateView();
 
             if (CrossPlatformInputManager.GetButtonDown("Jump") && !m_Jump)
@@ -139,6 +144,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void FixedUpdate()
         {
+			
+
             GroundCheck();
             Vector2 input = GetInput();
 
