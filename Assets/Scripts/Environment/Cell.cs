@@ -9,6 +9,8 @@ public class Cell {
 	public GameObject west;
 	public GameObject east;
 
+	public GameObject floorObject;
+
 	public Cell(){
 		north = null;
 		south = null;

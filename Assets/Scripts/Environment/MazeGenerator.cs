@@ -17,6 +17,11 @@ public class MazeGenerator : MonoBehaviour {
 	public float xSize = 5f;
 	public float ySize = 5f;
 
+	GameObject[] spawnPoints;
+
+	//TRAps
+	public GameObject upDownTrap;
+
 	Vector3 initialPos;
 	GameObject wallHolder;
 	public Cell[] cells;
@@ -46,9 +51,9 @@ public class MazeGenerator : MonoBehaviour {
 	}
 
 	void Awake(){
-		if (SceneManager.GetActiveScene ().name == "GameSetupScene") {
+		/*if (SceneManager.GetActiveScene ().name == "GameSetupScene") {
 			GenerateSeed ();
-		}
+		}*/
 	}
 
 	public void StartDebugGeneration(){
@@ -60,7 +65,7 @@ public class MazeGenerator : MonoBehaviour {
 	}
 
 	public void StartGeneration(){
-		
+		GameControl.gameControl.ui.ToggleGameSetup (false);
 		StartCoroutine (Load ());
 
 	}
@@ -70,6 +75,7 @@ public class MazeGenerator : MonoBehaviour {
 		ySize = float.Parse (GameControl.gameControl.ui.sizeYInput.text);
 
 		playerCount = GameControl.gameControl.ui.playerCountSelection.value + 1;
+		spawnPoints = new GameObject[3];
 		Debug.Log (playerCount + " players");
 
 		AsyncOperation loadScene = SceneManager.LoadSceneAsync ("MazeLevel");
@@ -141,14 +147,31 @@ public class MazeGenerator : MonoBehaviour {
 	{
 		if (i == ySize - 1 && j == xSize && playerCount >= 1) {
 			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+			spawnPoints [0] = _spawnPoint;
 		}
 		else if (i == 0 && j == xSize && playerCount >= 2) {
 			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+			spawnPoints [1] = _spawnPoint;
 		}
 		else if (i == ySize - 1 && j == 0 && playerCount >= 3) {
 			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+			spawnPoints [2] = _spawnPoint;
 		}
 	}
+
+	void AdjustSpawnPosition(Cell cell, int i){
+		if (i == xSize && spawnPoints[0] != null) {
+			spawnPoints [0].transform.position = cell.floorObject.transform.position;
+		}
+		else if (i == xSize * ySize && spawnPoints[1] != null) {
+			spawnPoints [1].transform.position = cell.floorObject.transform.position;
+		}
+		else if (i == xSize * (ySize - 1) && spawnPoints[2] != null) {
+			spawnPoints [2].transform.position = cell.floorObject.transform.position;
+		}
+	}
+
+
 
 	void CreateCells(){
 		lastCells = new List<int>();
@@ -179,7 +202,9 @@ public class MazeGenerator : MonoBehaviour {
 			termCount++; 
 			childProcess++;
 			cells [cellProcess].west = allWalls [eastWestProcess];
-			cells[cellProcess].north = allWalls[Mathf.RoundToInt((childProcess+(xSize+1)*ySize)+xSize-1)]; 
+			cells[cellProcess].north = allWalls[Mathf.RoundToInt((childProcess+(xSize+1)*ySize)+xSize-1)];
+			cells [cellProcess].floorObject = floorHolder.transform.GetChild (cellProcess).gameObject;
+			AdjustSpawnPosition (cells [cellProcess], cellProcess);
 		}
 
 		CreateMaze ();
@@ -219,14 +244,19 @@ public class MazeGenerator : MonoBehaviour {
 			trapAmountMultiplier = 1;
 		
 		traps = new int[Mathf.RoundToInt(xSize / 2) * trapAmountMultiplier];
+
 		for (int i = 0; i < traps.Length; i++) {
 
 			GameObject trapMarker = Instantiate (Resources.Load ("TrapMarker")) as GameObject;
+			GameObject trap = Instantiate (upDownTrap);
 
 			while (CheckExistingTraps (i) == false) {
 
 			}
 			trapMarker.transform.position = cells [traps[i]].north.transform.position;
+			trap.transform.position = cells [traps [i]].floorObject.transform.position;
+			TrapMechanic trapMechanic = trap.GetComponent<TrapMechanic>();
+			trapMechanic.TrapStepsOnSecond = Random.Range (2, 15);
 		}
 	}
 

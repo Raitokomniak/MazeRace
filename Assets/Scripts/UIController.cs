@@ -17,11 +17,13 @@ public class UIController : MonoBehaviour {
 
 	void Awake(){
 		if (SceneManager.GetActiveScene ().name == "MazeLevel") {
-			GameControl.gameControl.ui.ToggleGameSetup (false);
+			ToggleGameSetup (false);
 		} else if (SceneManager.GetActiveScene ().name == "GameSetupScene") {
-			GameControl.gameControl.ui.ToggleGameSetup (true);
+			ToggleGameSetup (true);
 		}
 	}
+
+
 
 	// Update is called once per frame
 	void Update () {
@@ -34,10 +36,11 @@ public class UIController : MonoBehaviour {
 
 		if (value == true) {
 			//seedInput. = GameControl.gameControl.maze.seed.ToString();
-			seedInput.text = GameControl.gameControl.maze.seed.ToString();
-			sizeXInput.text = GameControl.gameControl.maze.xSize.ToString ();
-			sizeYInput.text = GameControl.gameControl.maze.ySize.ToString ();
-
+			if (GameControl.gameControl != null) {
+				seedInput.text = GameControl.gameControl.maze.seed.ToString ();
+				sizeXInput.text = GameControl.gameControl.maze.xSize.ToString ();
+				sizeYInput.text = GameControl.gameControl.maze.ySize.ToString ();
+			}
 		}
 	}
 
