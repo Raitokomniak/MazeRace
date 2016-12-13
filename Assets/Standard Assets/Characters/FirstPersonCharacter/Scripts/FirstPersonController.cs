@@ -3,13 +3,15 @@ using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
+using UnityEngine.Networking;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
     [RequireComponent(typeof (CharacterController))]
     [RequireComponent(typeof (AudioSource))]
-    public class FirstPersonController : MonoBehaviour
+	public class FirstPersonController : NetworkBehaviour
     {
+
         [SerializeField] private bool m_IsWalking;
         [SerializeField] private float m_WalkSpeed;
         [SerializeField] private float m_RunSpeed;
@@ -17,7 +19,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private float m_JumpSpeed;
         [SerializeField] private float m_StickToGroundForce;
         [SerializeField] private float m_GravityMultiplier;
-        [SerializeField] private MouseLook m_MouseLook;
+		[SerializeField] public GameObject m_MouseLookObject;
+        [SerializeField] public MouseLook m_MouseLook;
         [SerializeField] private bool m_UseFovKick;
         [SerializeField] private FOVKick m_FovKick = new FOVKick();
         [SerializeField] private bool m_UseHeadBob;
@@ -28,7 +31,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private AudioClip m_JumpSound;           // the sound played when character leaves the ground.
         [SerializeField] private AudioClip m_LandSound;           // the sound played when character touches back on ground.
 
-        private Camera m_Camera;
+	
+
+        public Camera m_Camera;
         private bool m_Jump;
         private float m_YRotation;
         private Vector2 m_Input;
@@ -42,25 +47,44 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private bool m_Jumping;
         private AudioSource m_AudioSource;
 
+		static bool init = false;
+
         // Use this for initialization
         private void Start()
         {
-            m_CharacterController = GetComponent<CharacterController>();
-            m_Camera = Camera.main;
-            m_OriginalCameraPosition = m_Camera.transform.localPosition;
-            m_FovKick.Setup(m_Camera);
-            m_HeadBob.Setup(m_Camera, m_StepInterval);
-            m_StepCycle = 0f;
-            m_NextStep = m_StepCycle/2f;
-            m_Jumping = false;
-            m_AudioSource = GetComponent<AudioSource>();
-			m_MouseLook.Init(transform , m_Camera.transform);
+			if (isLocalPlayer && !init) {
+				InitPlayer ();
+			}
+
         }
 
+		public void InitPlayer(){
+			if (isLocalPlayer && !init) {
+				Debug.Log ("player init");
+				m_CharacterController = GetComponent<CharacterController> ();
+				m_Camera = transform.GetChild(0).GetChild(0).GetComponent<Camera>();
+				m_OriginalCameraPosition = m_Camera.transform.localPosition;
+				m_FovKick.Setup (m_Camera);
+				m_HeadBob.Setup (m_Camera, m_StepInterval);
+				m_StepCycle = 0f;
+				m_NextStep = m_StepCycle / 2f;
+				m_Jumping = false;
+				m_AudioSource = GetComponent<AudioSource> ();
+				m_MouseLookObject = Resources.Load ("PlayerMouseLook") as GameObject;
+				m_MouseLook = m_MouseLookObject.GetComponent<MouseLook> ();
+				m_MouseLook.Init (transform, m_Camera.transform);
+				init = true;
+			}
+		}
 
         // Update is called once per frame
         private void Update()
         {
+			if (isLocalPlayer)
+			{
+
+			
+
             RotateView();
             // the jump state needs to read here to make sure it is not missed
             if (!m_Jump)
@@ -81,6 +105,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
 
             m_PreviouslyGrounded = m_CharacterController.isGrounded;
+
+			}
         }
 
 
@@ -94,8 +120,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void FixedUpdate()
         {
+
+			if (isLocalPlayer)
+			{
+				
+			
+
             float speed;
             GetInput(out speed);
+
+
             // always move along the camera forward as it is the direction that it being aimed at
             Vector3 desiredMove = transform.forward*m_Input.y + transform.right*m_Input.x;
 
@@ -120,6 +154,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
                     m_Jump = false;
                     m_Jumping = true;
                 }
+
+				
+
             }
             else
             {
@@ -131,7 +168,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             UpdateCameraPosition(speed);
 
             m_MouseLook.UpdateCursorLock();
-        }
+        
+			}
+		}
+
+
 
 
         private void PlayJumpSound()
@@ -179,6 +220,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void UpdateCameraPosition(float speed)
         {
+
+
             Vector3 newCameraPosition;
             if (!m_UseHeadBob)
             {
@@ -203,6 +246,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void GetInput(out float speed)
         {
+
+
             // Read input
             float horizontal = CrossPlatformInputManager.GetAxis("Horizontal");
             float vertical = CrossPlatformInputManager.GetAxis("Vertical");
@@ -236,6 +281,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void RotateView()
         {
+			
+
             m_MouseLook.LookRotation (transform, m_Camera.transform);
         }
 
