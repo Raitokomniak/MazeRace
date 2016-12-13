@@ -68,7 +68,7 @@ public class TrapMechanic : MonoBehaviour {
     {
         y = transform.position.y + (yDelta / TrapStepsOnSecond * (Time.deltaTime * 10)); 
         transform.position = new Vector3(x, y, z);
-        Debug.Log("up");
+    //    Debug.Log("up");
         //yield return m_TrapWait;//???
     }
 
@@ -77,7 +77,7 @@ public class TrapMechanic : MonoBehaviour {
     {
         y = transform.position.y - (yDelta / TrapStepsOnSecond * (Time.deltaTime * 10));
         transform.position = new Vector3(x, y, z);
-        Debug.Log("down");
+       // Debug.Log("down");
         //yield return m_TrapWait;//???
     }
 }

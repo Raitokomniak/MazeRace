@@ -1,10 +1,18 @@
 fileFormatVersion: 2
 guid: 05ec5cf00ca181d45a42ba1870e148c3
-timeCreated: 1481620806
+timeCreated: 1481644980
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - m_MouseLookObject: {instanceID: 0}
+  - m_MouseLook: {instanceID: 0}
+  - m_JumpSound: {instanceID: 0}
+  - m_LandSound: {instanceID: 0}
+  - bulletPrefab: {fileID: 1000010405521608, guid: c0bd078b823e8284b87d90532bbe7c75,
+      type: 2}
+  - bulletSpawn: {instanceID: 0}
+  - m_Camera: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

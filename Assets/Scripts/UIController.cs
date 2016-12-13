@@ -50,10 +50,10 @@ public class UIController : MonoBehaviour {
 	}
 	//Update maze size to match input fields
 	public void UpdateSizes(){
-		if (int.Parse (sizeXInput.text) < 10)
+		/*if (int.Parse (sizeXInput.text) < 10)
 			sizeXInput.text = "10";
 		if (int.Parse (sizeYInput.text) < 10)
-			sizeYInput.text = "10";
+			sizeYInput.text = "10";*/
 	}
 
 	//Update input field after generation

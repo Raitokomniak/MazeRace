@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
 
 public class MazeGenerator : MonoBehaviour {
 
@@ -37,23 +38,22 @@ public class MazeGenerator : MonoBehaviour {
 	public int trapAmountMultiplier;
 	int[] traps;
 
+	bool init = false;
+
+
 	// Use this for initialization
 	void Start () {
-
-		//Muuta tämä sitten triggeröitymään eri paikasta kun peli alkaa
-		if (SceneManager.GetActiveScene ().name == "GameSetupScene") {
-			GenerateSeed ();
-			//StartGeneration ();
-		} else {
-			StartDebugGeneration ();
-		}
-		//seedGeneratorSeed = GenerateSeed ();
+		
 	}
-
-	void Awake(){
-		/*if (SceneManager.GetActiveScene ().name == "GameSetupScene") {
-			GenerateSeed ();
-		}*/
+		
+	public void Awake(){
+		if (SceneManager.GetActiveScene ().name == "GameSetupScene") {
+			
+		} else if(SceneManager.GetActiveScene().name == "MazeLevel" && !init) {
+			seed = 1337;
+			StartGeneration ();
+			init = true;
+		}
 	}
 
 	public void StartDebugGeneration(){
@@ -65,8 +65,20 @@ public class MazeGenerator : MonoBehaviour {
 	}
 
 	public void StartGeneration(){
+
 		GameControl.gameControl.ui.ToggleGameSetup (false);
-		StartCoroutine (Load ());
+		Random.InitState (seed);
+		xSize = 10;
+		ySize = 10;
+
+		//playerCount = GameControl.gameControl.ui.playerCountSelection.value + 1;
+		playerCount = 1;
+		spawnPoints = new GameObject[3];
+		Debug.Log (playerCount + " players");
+
+		CreateWalls ();
+
+		//StartCoroutine (Load ());
 
 	}
 	IEnumerator Load(){
