@@ -33,8 +33,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 		public GameObject bulletPrefab;
 		public Transform bulletSpawn;
+        public AudioSource m_AudioSource;
+        public Camera m_Camera;
+        public AudioClip m_GunFire;
+        public AudioSource m_GunFireAudioSource;
 
-		public Camera m_Camera;
 		private bool m_Jump;
 		private float m_YRotation;
 		private Vector2 m_Input;
@@ -46,7 +49,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		private float m_StepCycle;
 		private float m_NextStep;
 		private bool m_Jumping;
-		public AudioSource m_AudioSource;
+
 
 		static bool init = false;
 
@@ -126,7 +129,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			if (Time.time >= timeStamp) {
 				var bullet = (GameObject)Instantiate (bulletPrefab, bulletSpawn.position, Quaternion.identity);
 				bullet.GetComponent<Rigidbody> ().AddForce (m_Camera.transform.forward * 100);
-				//PlayShootSound ();
+				PlayShootSound();
 				Destroy (bullet, 2.0f);
 				timeStamp = Time.time + 0.5f;
 			}
@@ -324,5 +327,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			}
 			body.AddForceAtPosition(m_CharacterController.velocity*0.1f, hit.point, ForceMode.Impulse);
 		}
-	}
+
+        private void PlayShootSound()
+        {
+            m_GunFireAudioSource.clip = m_GunFire;
+            m_GunFireAudioSource.pitch = Random.Range(1f,1.5f);
+            m_GunFireAudioSource.Play();
+            Debug.Log("fire");
+        }
+
+    }
 }
