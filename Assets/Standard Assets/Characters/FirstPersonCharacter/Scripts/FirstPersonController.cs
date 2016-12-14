@@ -131,7 +131,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				bullet.GetComponent<Rigidbody> ().AddForce (m_Camera.transform.forward * 100);
 				PlayShootSound();
 				Destroy (bullet, 2.0f);
-				timeStamp = Time.time + 0.5f;
+				timeStamp = Time.time + 0f;
 			}
 		}
 
