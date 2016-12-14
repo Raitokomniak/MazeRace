@@ -19,12 +19,12 @@ public class TrapInteraction : MonoBehaviour {
 
     void OnTriggerStay(Collider other)
     {
-        rand = Random.Range(1, 3);
-        //Debug.Log(rand);
+
 
         if (other.gameObject.CompareTag("Trap"))
         {
-
+            rand = Random.Range(1, 3);
+            Debug.Log(rand);
             if (!m_DamageAudio.isPlaying)
             {
                 if(rand == 1)
@@ -35,7 +35,7 @@ public class TrapInteraction : MonoBehaviour {
                 {
                     m_DamageAudio.clip = m_Damage2;
                 }
-                m_DamageAudio.pitch = Random.Range(0.5f, 1.5f);
+                m_DamageAudio.pitch = Random.Range(1f, 1.5f);
                 m_DamageAudio.Play();
             }
 

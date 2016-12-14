@@ -266,9 +266,9 @@ public class MazeGenerator : MonoBehaviour {
 
 			}
 			trapMarker.transform.position = cells [traps[i]].north.transform.position;
-			trap.transform.position = cells [traps [i]].floorObject.transform.position;
+			trap.transform.position = cells [traps [i]].north.transform.position;
 			TrapMechanic trapMechanic = trap.GetComponent<TrapMechanic>();
-			trapMechanic.TrapStepsOnSecond = Random.Range (2, 15);
+			trapMechanic.TrapStepsOnSecond = Random.Range (8, 15);
 		}
 	}
 

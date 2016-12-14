@@ -3,8 +3,8 @@ using System.Collections;
 
 public class TrapMechanic : MonoBehaviour {
     //public float m_TrapDelay = 1f;          //not working  as intended ????
-    public float y1 = -1.02f;               //lowest point that object has when moving on y axis
-    public float y2 = 0.63f;                //highest point that object has when moving on y axis
+    public float y1 = -2f;               //lowest point that object has when moving on y axis
+    public float y2 = 0f;                //highest point that object has when moving on y axis
     public int TrapStepsOnSecond = 30;      //how much trap moves every frame
     public bool trapFlag = true;            //set false to start trap from up position. true to start from bottom.
 
@@ -21,6 +21,9 @@ public class TrapMechanic : MonoBehaviour {
         //m_TrapWait = new WaitForSeconds(m_TrapDelay);//????
         x = transform.position.x;
         z = transform.position.z;
+
+        transform.localScale = new Vector3(2f, 1.5f, 2f);
+        
 
         if(trapFlag)
         {
