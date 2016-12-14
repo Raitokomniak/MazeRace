@@ -95,7 +95,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 				if(Input.GetKeyDown(KeyCode.Mouse0))
 				{
-					Fire ();
+					CmdFire ();
 				}
 
 				RotateView();
@@ -121,11 +121,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 			}
 		}
-
-		private void Fire() {
+		[Command]
+		private void CmdFire() {
 			if (Time.time >= timeStamp) {
 				var bullet = (GameObject)Instantiate (bulletPrefab, bulletSpawn.position, Quaternion.identity);
-				bullet.GetComponent<Rigidbody> ().AddForce (m_Camera.transform.forward * 100);
+				bullet.GetComponent<Rigidbody> ().velocity = m_Camera.transform.forward * 5;
+				if(isClient) {
+					ClientScene.RegisterPrefab (bullet);
+					NetworkServer.SpawnWithClientAuthority (bullet, base.connectionToClient);
+				}
+				NetworkServer.Spawn (bullet);
 				//PlayShootSound ();
 				Destroy (bullet, 2.0f);
 				timeStamp = Time.time + 0.5f;
