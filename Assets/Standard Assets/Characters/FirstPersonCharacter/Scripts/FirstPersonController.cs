@@ -36,6 +36,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 		public GameObject bulletPrefab;
 		public Transform bulletSpawn;
+		public float gunCooldown = 0.2f;
         public AudioSource m_AudioSource;
         public Camera m_Camera;
         public AudioClip m_GunFire;
@@ -128,7 +129,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 				if(Input.GetKeyDown(KeyCode.Mouse0))
 				{
-					Fire ();
+					CmdFire ();
 				}
 
 				RotateView();
@@ -156,13 +157,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 		}
 
-		private void Fire() {
-			if (Time.time >= timeStamp) {
-				var bullet = (GameObject)Instantiate (bulletPrefab, bulletSpawn.position, Quaternion.identity);
-				bullet.GetComponent<Rigidbody> ().AddForce (m_Camera.transform.forward * 100);
-				PlayShootSound();
-				Destroy (bullet, 2.0f);
-				timeStamp = Time.time + 0f;
+		[Command]
+		private void CmdFire() {
+			if (Time.time >= timeStamp) {	
+				var bullet = (GameObject)Instantiate(
+					bulletPrefab,
+					bulletSpawn.position,
+					bulletSpawn.rotation);
+				bullet.GetComponent<Rigidbody>().velocity = bulletSpawn.transform.forward * 6;
+				PlayShootSound ();
+				NetworkServer.Spawn(bullet);
+				Destroy(bullet, 2.0f);
+				timeStamp = Time.time + gunCooldown;
 			}
 		}
 
