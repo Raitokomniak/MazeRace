@@ -11,7 +11,7 @@ class SeedMessage : MessageBase{
 public class MyMsgType {
 	public static short Seed = MsgType.Highest + 1;
 }
-
+	
 public class NetworkHandler : NetworkBehaviour {
 	
 
@@ -20,7 +20,7 @@ public class NetworkHandler : NetworkBehaviour {
 
 	public const short SeedMsgId = 1337;
 
-	[SyncVar(hook = "OnSeedChanged")]
+	[SyncVar(hook = "OnPlayerCountChanged")]
 	public int playerCount = 0;
 
 	[SyncVar(hook = "OnSeedChanged")]
@@ -34,7 +34,14 @@ public class NetworkHandler : NetworkBehaviour {
 
 	public override void OnStartServer(){
 		Debug.Log ("server started");
+		playerCount++;
 
+	}
+
+	void Update(){
+		if (playerCount != GameObject.FindGameObjectsWithTag ("Player").Length) {
+			playerCount = GameObject.FindGameObjectsWithTag ("Player").Length;
+		}
 	}
 
 	void OnSeedChanged(int seed){
@@ -53,9 +60,13 @@ public class NetworkHandler : NetworkBehaviour {
 		GameControl.gameControl.maze.ySize = sizeY;
 	}
 
-	void Update(){
-		//SendSeed ();
+
+	void OnPlayerCountChanged(int playerCount){
+		Debug.Log ("Player " + playerCount + " joined the game");
+		GameControl.gameControl.ui.PlayToast ("Player " + playerCount + " joined the game");
 	}
+
+
 
 	public void SendSeed(){
 		//Debug.Log ("Sending seed");
@@ -67,21 +78,15 @@ public class NetworkHandler : NetworkBehaviour {
 	}
 
 	public override void OnStartClient(){
-		playerCount++;
 		Debug.Log ("Generating maze with seed " + seed);
 		GameControl.gameControl.maze.seed = seed;
 		StartCoroutine (GameControl.gameControl.maze.WaitForLoad ());
-
 	}
 
 
-	public void OnSeed(NetworkMessage netMsg){
-		
-		//SeedMessage seedMsg = netMsg.ReadMessage<SeedMessage> ();
-		//Debug.Log ("getting seed " + seedMsg.seed);
-	}
 
 	public void OnPlayerConnected(NetworkPlayer player){
+		GameControl.gameControl.ui.PlayToast ("Connected");
 		Debug.Log ("someone connected, send seed");
 	}
 

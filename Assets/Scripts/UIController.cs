@@ -10,6 +10,8 @@ public class UIController : MonoBehaviour {
 	public InputField sizeYInput;
 	public Dropdown playerCountSelection;
 
+	public Text networkToast;
+
 	// Use this for initialization
 	void Start () {
 
@@ -61,5 +63,14 @@ public class UIController : MonoBehaviour {
 		seedInput.text = GameControl.gameControl.maze.seed.ToString ();
 	}
 		
+	public void PlayToast(string text){
+		StartCoroutine (Toast(text));
+	}
 
+	IEnumerator Toast(string text){
+		networkToast.gameObject.SetActive (true);
+		networkToast.text = text;
+		yield return new WaitForSeconds (2f);
+		networkToast.gameObject.SetActive (false);
+	}
 }
