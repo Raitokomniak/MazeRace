@@ -33,6 +33,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 		public GameObject bulletPrefab;
 		public Transform bulletSpawn;
+		public float gunCooldown = 0.2f;
 
 		public Camera m_Camera;
 		private bool m_Jump;
@@ -123,18 +124,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		}
 		[Command]
 		private void CmdFire() {
-			if (Time.time >= timeStamp) {
-				var bullet = (GameObject)Instantiate (bulletPrefab, bulletSpawn.position, Quaternion.identity);
-				bullet.GetComponent<Rigidbody> ().velocity = m_Camera.transform.forward * 5;
-				if(isClient) {
-					ClientScene.RegisterPrefab (bullet);
-					NetworkServer.SpawnWithClientAuthority (bullet, base.connectionToClient);
-				}
-				NetworkServer.Spawn (bullet);
-				//PlayShootSound ();
-				Destroy (bullet, 2.0f);
-				timeStamp = Time.time + 0.5f;
+			if (Time.time >= timeStamp) {	
+				var bullet = (GameObject)Instantiate(
+					bulletPrefab,
+					bulletSpawn.position,
+					bulletSpawn.rotation);
+				bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * 6;
+
+				NetworkServer.Spawn(bullet);
+				Destroy(bullet, 2.0f);
 			}
+
 		}
 
 		private void PlayLandingSound()
