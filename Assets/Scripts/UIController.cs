@@ -12,12 +12,14 @@ public class UIController : MonoBehaviour {
 
 	public Text networkToast;
 
+	IEnumerator toastRoutine;
 	// Use this for initialization
 	void Start () {
 
 	}
 
 	void Awake(){
+		
 		if (SceneManager.GetActiveScene ().name == "MazeLevel") {
 			ToggleGameSetup (false);
 		} else if (SceneManager.GetActiveScene ().name == "GameSetupScene") {
@@ -64,7 +66,8 @@ public class UIController : MonoBehaviour {
 	}
 		
 	public void PlayToast(string text){
-		StartCoroutine (Toast(text));
+		toastRoutine = Toast (text);
+		StartCoroutine (toastRoutine);
 	}
 
 	IEnumerator Toast(string text){

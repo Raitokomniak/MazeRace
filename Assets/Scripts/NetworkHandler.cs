@@ -11,41 +11,87 @@ class SeedMessage : MessageBase{
 public class MyMsgType {
 	public static short Seed = MsgType.Highest + 1;
 }
-	
+
 public class NetworkHandler : NetworkBehaviour {
-	
+
 
 	public NetworkClient client;
 	public NetworkManager netManager;
 
 	public const short SeedMsgId = 1337;
 
+
+	public int playerId = 0;
+	bool joinToastPlayed;
+	bool leaveToastPlayed = true;
+
+	[SyncVar(hook = "OnRecentlyJoinedChanged")]
+	int recentlyJoined = 0;
+
+	[SyncVar(hook = "OnRecentlyLeftChanged")]
+	int recentlyLeft = 0;
+
+
 	[SyncVar(hook = "OnPlayerCountChanged")]
 	public int playerCount = 0;
+
+	public int playerCountStash =0;
 
 	[SyncVar(hook = "OnSeedChanged")]
 	public int seed = 1337;
 
 	[SyncVar(hook = "OnSizeXChanged")]
-	public int sizeX = 10;
+	public int sizeX = 0;
 
 	[SyncVar(hook = "OnSizeYChanged")]
-	public int sizeY = 10;
+	public int sizeY = 0;
 
 	public override void OnStartServer(){
-		Debug.Log ("server started");
-		playerCount++;
 
 	}
+
+	public override void OnStartClient(){
+		
+	}
+
+
 
 	void Update(){
-		if (playerCount != GameObject.FindGameObjectsWithTag ("Player").Length) {
-			playerCount = GameObject.FindGameObjectsWithTag ("Player").Length;
+		int foundPlayers = GameObject.FindGameObjectsWithTag ("Player").Length;
+		if(playerCount != foundPlayers)
+		{
+			
+			//If was this who joined
+			if (playerId == 0) {
+				Debug.Log ("Connected to server");
+				playerId = foundPlayers;
+				if(playerCount < foundPlayers)	recentlyJoined = playerId;
+
+				playerCount = GameObject.FindGameObjectsWithTag ("Player").Length;
+				playerCountStash = playerCount;
+
+				//Set seed and generate
+				GameControl.gameControl.maze.seed = seed;
+				Debug.Log ("Generating maze with seed " + seed);
+				StartCoroutine (GameControl.gameControl.maze.WaitForLoad (playerId));
+
+				Debug.Log ("Connected, " + playerCount + " players, playedID: " + playerId);
+			} else {
+				if (playerCount < foundPlayers) {
+					recentlyJoined = GameObject.FindGameObjectsWithTag ("Player").Length;
+					playerCount = GameObject.FindGameObjectsWithTag ("Player").Length;
+				}
+			}
 		}
+
 	}
 
+
+	/////////////////////
+	/// MAP INFO
+	/////////////////////
 	void OnSeedChanged(int seed){
-		
+
 		GameControl.gameControl.maze.seed = seed;
 		Debug.Log ("seed changed to " + seed);
 	}
@@ -61,38 +107,39 @@ public class NetworkHandler : NetworkBehaviour {
 	}
 
 
-	void OnPlayerCountChanged(int playerCount){
-		Debug.Log ("Player " + playerCount + " joined the game");
-		GameControl.gameControl.ui.PlayToast ("Player " + playerCount + " joined the game");
-	}
+	/////////////////////
+	/// PLAYER INFO
+	/////////////////////
 
-
-
-	public void SendSeed(){
-		//Debug.Log ("Sending seed");
-		SeedMessage msg = new SeedMessage();
-		msg.seed = "1111";
-		//NetworkServer.SendToAll (MyMsgType.Seed, msg);
-		//NetworkServer.SendToClient (1, MyMsgType.Seed, msg);
-
-	}
-
-	public override void OnStartClient(){
-		Debug.Log ("Generating maze with seed " + seed);
-		GameControl.gameControl.maze.seed = seed;
-		StartCoroutine (GameControl.gameControl.maze.WaitForLoad ());
-	}
-
-
-
-	public void OnPlayerConnected(NetworkPlayer player){
-		GameControl.gameControl.ui.PlayToast ("Connected");
-		Debug.Log ("someone connected, send seed");
-	}
-
-	public void OnConnected(NetworkMessage netMsg)
+	void OnRecentlyJoinedChanged(int recentlyJoined)
 	{
-		Debug.Log("Connected to server");
+		Debug.Log ("Player " + recentlyJoined + " joined the game");
+		GameControl.gameControl.ui.PlayToast ("Player " + recentlyJoined + " joined the game");
+		joinToastPlayed = true;
+		//leaveToastPlayed = false;
 	}
-}
 
+	void OnRecentlyLeftChanged(int recentlyLeft)
+	{
+		GameControl.gameControl.ui.PlayToast ("Player " + recentlyLeft + " left the game");
+
+	}
+
+	void OnPlayerCountChanged(int playerCount){
+		
+		if (playerId != 0) {
+			Debug.Log (playerCount + " players vs stash " + playerCountStash);
+			if (playerCount > playerCountStash) {
+				Debug.Log ("New Player, recently joined playedID: " + recentlyJoined);
+				joinToastPlayed = false;
+			} else if (playerCount < playerCountStash) {
+				Debug.Log ("Just left id:  " + recentlyLeft);
+				leaveToastPlayed = false;
+			}
+
+		}
+	}
+
+
+
+}

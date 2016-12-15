@@ -43,11 +43,11 @@ public class MazeGenerator : MonoBehaviour {
 	bool init = false;
 	public bool mazeGenerated;
 
-	public IEnumerator WaitForLoad(){
+	public IEnumerator WaitForLoad(int index){
 		yield return new WaitUntil (() => SceneManager.GetActiveScene ().name == "MazeLevel");
 		StartGeneration ();
 		yield return new WaitUntil (() => mazeGenerated == true);
-		SetSpawnPoint (networkHandler.playerCount);
+		SetSpawnPoint (index);
 		//playerCount++;
 	}
 
@@ -61,6 +61,7 @@ public class MazeGenerator : MonoBehaviour {
 
 
 	public void SetSpawnPoint(int index){
+		Debug.Log (index + " spawn");
 		while (GameObject.FindGameObjectsWithTag ("Player") == null) {
 		}
 
