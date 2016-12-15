@@ -65,7 +65,6 @@ public class MazeGenerator : MonoBehaviour {
 		}
 
 		GameObject[] players = GameObject.FindGameObjectsWithTag ("Player");
-		Debug.Log (players.Length);
 
 		Vector3 offSet = Vector3.zero;
 		if (index == 1)
