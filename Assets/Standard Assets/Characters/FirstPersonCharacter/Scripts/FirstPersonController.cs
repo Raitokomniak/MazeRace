@@ -6,13 +6,14 @@ using Random = UnityEngine.Random;
 using UnityEngine.Networking;
 
 
+
 namespace UnityStandardAssets.Characters.FirstPerson
+
 {
 	[RequireComponent(typeof (CharacterController))]
 	[RequireComponent(typeof (AudioSource))]
 	public class FirstPersonController : NetworkBehaviour
 	{
-
 
 		[SerializeField] private bool m_IsWalking;
 		[SerializeField] private float m_WalkSpeed;
