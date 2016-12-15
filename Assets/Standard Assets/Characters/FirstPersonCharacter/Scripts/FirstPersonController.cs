@@ -133,10 +133,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 				NetworkServer.Spawn(bullet);
 				Destroy(bullet, 2.0f);
+				timeStamp = Time.time + gunCooldown;
 			}
-
 		}
-
+			
 		private void PlayLandingSound()
 		{
 			m_AudioSource.clip = m_LandSound;
