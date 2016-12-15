@@ -6,8 +6,10 @@ using UnityEngine.Networking;
 
 public class MazeGenerator : MonoBehaviour {
 
+	public NetworkHandler networkHandler;
+
 	static Random.State seedGenerator;
-	public int seed = 1337;
+	public int seed;
 	static bool seedGeneratorInit = false;
 	public int playerCount;
 
@@ -39,69 +41,50 @@ public class MazeGenerator : MonoBehaviour {
 	int[] traps;
 
 	bool init = false;
+	public bool mazeGenerated;
 
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-		
-	public void Awake(){
-		if (SceneManager.GetActiveScene ().name == "GameSetupScene") {
-			
-		} else if(SceneManager.GetActiveScene().name == "MazeLevel" && !init) {
-			seed = 1337;
-			StartGeneration ();
-			init = true;
-		}
-	}
-
-	public void StartDebugGeneration(){
-		Random.InitState (seed);
-
-		playerCount = 3;
-		Debug.Log (playerCount + " players");
-		CreateWalls ();
+	public IEnumerator WaitForLoad(){
+		yield return new WaitUntil (() => SceneManager.GetActiveScene ().name == "MazeLevel");
+		StartGeneration ();
+		yield return new WaitUntil (() => mazeGenerated == true);
+		SetSpawnPoint (networkHandler.playerCount);
+		//playerCount++;
 	}
 
 	public void StartGeneration(){
-
 		GameControl.gameControl.ui.ToggleGameSetup (false);
 		Random.InitState (seed);
-		xSize = 10;
-		ySize = 10;
-
-		//playerCount = GameControl.gameControl.ui.playerCountSelection.value + 1;
-		playerCount = 1;
 		spawnPoints = new GameObject[3];
-		Debug.Log (playerCount + " players");
-
-		CreateWalls ();
-
-		//StartCoroutine (Load ());
-
-	}
-	IEnumerator Load(){
-		Random.InitState (seed);
-		xSize = float.Parse (GameControl.gameControl.ui.sizeXInput.text);
-		ySize = float.Parse (GameControl.gameControl.ui.sizeYInput.text);
-
-		playerCount = GameControl.gameControl.ui.playerCountSelection.value + 1;
-		spawnPoints = new GameObject[3];
-		Debug.Log (playerCount + " players");
-
-		AsyncOperation loadScene = SceneManager.LoadSceneAsync ("MazeLevel");
-		yield return loadScene;
-
 		CreateWalls ();
 	}
 
+
+
+	public void SetSpawnPoint(int index){
+		while (GameObject.FindGameObjectsWithTag ("Player") == null) {
+		}
+
+		GameObject[] players = GameObject.FindGameObjectsWithTag ("Player");
+		Debug.Log (players.Length);
+
+		Vector3 offSet = Vector3.zero;
+		if (index == 1)
+			offSet = new Vector3 (-1, 10, 0);
+		else if (index == 2)
+			offSet = new Vector3 (1, 10, 0);
+		else if (index == 3)
+			offSet = new Vector3 (-1, 10, 0);
+		
+		players [index - 1].transform.position = GameObject.Find ("SpawnPoint" + index).transform.position + offSet;
+	}
+		
 
 
 	public void GenerateSeed(){
 		var generatedSeed = Random.Range(int.MinValue, int.MaxValue);
 		seedGenerator = Random.state;
 		seed = generatedSeed;
+		networkHandler.seed = seed;
 		GameControl.gameControl.ui.UpdateSeedInput ();
 	}
 
@@ -157,30 +140,35 @@ public class MazeGenerator : MonoBehaviour {
 
 	void CreateSpawnPoints(int i, int j, GameObject tempWall)
 	{
-		if (i == ySize - 1 && j == xSize && playerCount >= 1) {
+		if (i == 0 && j == xSize) {
 			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+			_spawnPoint.name = "SpawnPoint1";
 			spawnPoints [0] = _spawnPoint;
 		}
-		else if (i == 0 && j == xSize && playerCount >= 2) {
+		else if (i == ySize - 1 && j == 0) {
 			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+			_spawnPoint.name = "SpawnPoint2";
 			spawnPoints [1] = _spawnPoint;
 		}
-		else if (i == ySize - 1 && j == 0 && playerCount >= 3) {
+		else if (i == ySize - 1 && j == xSize) {
 			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
+			_spawnPoint.name = "SpawnPoint3";
 			spawnPoints [2] = _spawnPoint;
 		}
+
 	}
 
 	void AdjustSpawnPosition(Cell cell, int i){
-		if (i == xSize && spawnPoints[0] != null) {
-			spawnPoints [0].transform.position = cell.floorObject.transform.position;
-		}
-		else if (i == xSize * ySize && spawnPoints[1] != null) {
+		
+		/*if (i == xSize && ) {
+			spawnPoints [1].transform.position = cell.floorObject.transform.position;
+		}/*
+		else if (i == xSize * ySize) {
 			spawnPoints [1].transform.position = cell.floorObject.transform.position;
 		}
-		else if (i == xSize * (ySize - 1) && spawnPoints[2] != null) {
-			spawnPoints [2].transform.position = cell.floorObject.transform.position;
-		}
+		else if (i == xSize * (ySize - 1)) {
+			//spawnPoints [2].transform.position = cell.floorObject.transform.position;
+		}*/
 	}
 
 
@@ -270,6 +258,9 @@ public class MazeGenerator : MonoBehaviour {
 			TrapMechanic trapMechanic = trap.GetComponent<TrapMechanic>();
 			trapMechanic.TrapStepsOnSecond = Random.Range (8, 15);
 		}
+
+		mazeGenerated = true;
+
 	}
 
 	bool CheckExistingTraps(int index){

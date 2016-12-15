@@ -5,12 +5,14 @@ using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 using UnityEngine.Networking;
 
+
 namespace UnityStandardAssets.Characters.FirstPerson
 {
 	[RequireComponent(typeof (CharacterController))]
 	[RequireComponent(typeof (AudioSource))]
 	public class FirstPersonController : NetworkBehaviour
 	{
+
 
 		[SerializeField] private bool m_IsWalking;
 		[SerializeField] private float m_WalkSpeed;
@@ -38,6 +40,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public AudioClip m_GunFire;
         public AudioSource m_GunFireAudioSource;
 
+		public Vector3 spawnPosition;
+
 		private bool m_Jump;
 		private float m_YRotation;
 		private Vector2 m_Input;
@@ -49,6 +53,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		private float m_StepCycle;
 		private float m_NextStep;
 		private bool m_Jumping;
+
+	
+
 
 
 		static bool init = false;
@@ -64,8 +71,23 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 		}
 
+		void Awake(){
+			transform.position += new Vector3 (1, 10, 0);
+
+			if (isServer) {
+				
+			} else {
+
+				//Debug.Log ("this is client");
+			}
+		}
+			
+
+
+
 		public void InitPlayer(){
 			m_Camera = transform.GetChild(0).GetComponent<Camera>();
+			AudioListener listener = transform.GetChild(0).GetComponent<AudioListener>();
 			if (isLocalPlayer && !init) {
 				Debug.Log ("player init");
 				m_CharacterController = GetComponent<CharacterController> ();
@@ -85,14 +107,21 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			}	
 			if (isLocalPlayer) {
 				m_Camera.enabled = true;
+				listener.enabled = true;
 			} else {
 				m_Camera.enabled = false;
+				listener.enabled = false;
 			}
+
 		}
+
+
+
 
 		// Update is called once per frame
 		private void Update()
 		{
+			
 			if (isLocalPlayer)
 			{
 
@@ -123,6 +152,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				m_PreviouslyGrounded = m_CharacterController.isGrounded;
 
 			}
+
 		}
 
 		private void Fire() {
@@ -337,4 +367,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
     }
+
+	
 }
+
+
+
