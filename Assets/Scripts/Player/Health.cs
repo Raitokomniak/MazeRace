@@ -20,12 +20,23 @@ public class Health : NetworkBehaviour {
 		currentHealth -= amount;
 		if (currentHealth <= 0)
 		{
-			currentHealth = 0;
+			currentHealth = maxHealth;
 			Debug.Log("Dead!");
+			RpcRespawn ();
 		}
 	}
 
 	void OnChangedHealth(int health) {
 		healthbar.sizeDelta = new Vector2 (health, healthbar.sizeDelta.y);
+	}
+
+	[ClientRpc]
+	void RpcRespawn()
+	{
+		if(isLocalPlayer)
+		{
+			//set actual spawn position here
+			transform.position = Vector3.zero;
+		}
 	}
 }
