@@ -6,10 +6,8 @@ using UnityEngine.Networking;
 
 public class MazeGenerator : MonoBehaviour {
 
-	public NetworkHandler networkHandler;
-
 	static Random.State seedGenerator;
-	public int seed;
+	public int seed = 1337;
 	static bool seedGeneratorInit = false;
 	public int playerCount;
 
@@ -24,6 +22,9 @@ public class MazeGenerator : MonoBehaviour {
 
 	//TRAps
 	public GameObject upDownTrap;
+    //Objects
+    public GameObject FinishObject;
+    public GameObject PowerUpObject;
 
 	Vector3 initialPos;
 	GameObject wallHolder;
@@ -38,53 +39,74 @@ public class MazeGenerator : MonoBehaviour {
 	int wallToBreak;
 
 	public int trapAmountMultiplier;
+    public int objectMultiplier;
 	int[] traps;
+    int[] objects;
 
 	bool init = false;
-	public bool mazeGenerated;
 
-	public IEnumerator WaitForLoad(){
-		yield return new WaitUntil (() => SceneManager.GetActiveScene ().name == "MazeLevel");
-		StartGeneration ();
-		yield return new WaitUntil (() => mazeGenerated == true);
-		SetSpawnPoint (networkHandler.playerCount);
-		//playerCount++;
+
+	// Use this for initialization
+	void Start () {
+		
+	}
+		
+	public void Awake(){
+		if (SceneManager.GetActiveScene ().name == "GameSetupScene") {
+			
+		} else if(SceneManager.GetActiveScene().name == "MazeLevel" && !init) {
+			seed = 1337;
+			StartGeneration ();
+			init = true;
+		}
 	}
 
-	public void StartGeneration(){
-		GameControl.gameControl.ui.ToggleGameSetup (false);
+	public void StartDebugGeneration(){
 		Random.InitState (seed);
-		spawnPoints = new GameObject[3];
+
+		playerCount = 3;
+		Debug.Log (playerCount + " players");
 		CreateWalls ();
 	}
 
+	public void StartGeneration(){
 
+		GameControl.gameControl.ui.ToggleGameSetup (false);
+		Random.InitState (seed);
+		xSize = 10;
+		ySize = 10;
 
-	public void SetSpawnPoint(int index){
-		while (GameObject.FindGameObjectsWithTag ("Player") == null) {
-		}
+		//playerCount = GameControl.gameControl.ui.playerCountSelection.value + 1;
+		playerCount = 1;
+		spawnPoints = new GameObject[3];
+		Debug.Log (playerCount + " players");
 
-		GameObject[] players = GameObject.FindGameObjectsWithTag ("Player");
-		Debug.Log (players.Length);
+		CreateWalls ();
 
-		Vector3 offSet = Vector3.zero;
-		if (index == 1)
-			offSet = new Vector3 (-1, 10, 0);
-		else if (index == 2)
-			offSet = new Vector3 (1, 10, 0);
-		else if (index == 3)
-			offSet = new Vector3 (-1, 10, 0);
-		
-		players [index - 1].transform.position = GameObject.Find ("SpawnPoint" + index).transform.position + offSet;
+		//StartCoroutine (Load ());
+
 	}
-		
+	IEnumerator Load(){
+		Random.InitState (seed);
+		xSize = float.Parse (GameControl.gameControl.ui.sizeXInput.text);
+		ySize = float.Parse (GameControl.gameControl.ui.sizeYInput.text);
+
+		playerCount = GameControl.gameControl.ui.playerCountSelection.value + 1;
+		spawnPoints = new GameObject[3];
+		Debug.Log (playerCount + " players");
+
+		AsyncOperation loadScene = SceneManager.LoadSceneAsync ("MazeLevel");
+		yield return loadScene;
+
+		CreateWalls ();
+	}
+
 
 
 	public void GenerateSeed(){
 		var generatedSeed = Random.Range(int.MinValue, int.MaxValue);
 		seedGenerator = Random.state;
 		seed = generatedSeed;
-		networkHandler.seed = seed;
 		GameControl.gameControl.ui.UpdateSeedInput ();
 	}
 
@@ -118,7 +140,9 @@ public class MazeGenerator : MonoBehaviour {
 
 				if (j == 0 && !exit) {
 					GameObject exitMarker = Instantiate (Resources.Load ("ExitMarker"), tempWall.transform.position, Quaternion.identity) as GameObject;
-					Destroy (tempWall);
+                    GameObject finish = Instantiate(FinishObject);
+                    finish.transform.position = new Vector3(exitMarker.transform.position.x, 0.25f, exitMarker.transform.position.z);
+                    Destroy (tempWall);
 					exit = true;
 				}
 				CreateSpawnPoints (i, j, tempWall);
@@ -140,35 +164,30 @@ public class MazeGenerator : MonoBehaviour {
 
 	void CreateSpawnPoints(int i, int j, GameObject tempWall)
 	{
-		if (i == 0 && j == xSize) {
+		if (i == ySize - 1 && j == xSize && playerCount >= 1) {
 			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
-			_spawnPoint.name = "SpawnPoint1";
 			spawnPoints [0] = _spawnPoint;
 		}
-		else if (i == ySize - 1 && j == 0) {
+		else if (i == 0 && j == xSize && playerCount >= 2) {
 			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
-			_spawnPoint.name = "SpawnPoint2";
 			spawnPoints [1] = _spawnPoint;
 		}
-		else if (i == ySize - 1 && j == xSize) {
+		else if (i == ySize - 1 && j == 0 && playerCount >= 3) {
 			GameObject _spawnPoint = Instantiate (Resources.Load ("SpawnPoint"), tempWall.transform.position, Quaternion.identity) as GameObject;
-			_spawnPoint.name = "SpawnPoint3";
 			spawnPoints [2] = _spawnPoint;
 		}
-
 	}
 
 	void AdjustSpawnPosition(Cell cell, int i){
-		
-		/*if (i == xSize && ) {
-			spawnPoints [1].transform.position = cell.floorObject.transform.position;
-		}/*
-		else if (i == xSize * ySize) {
+		if (i == xSize && spawnPoints[0] != null) {
+			spawnPoints [0].transform.position = cell.floorObject.transform.position;
+		}
+		else if (i == xSize * ySize && spawnPoints[1] != null) {
 			spawnPoints [1].transform.position = cell.floorObject.transform.position;
 		}
-		else if (i == xSize * (ySize - 1)) {
-			//spawnPoints [2].transform.position = cell.floorObject.transform.position;
-		}*/
+		else if (i == xSize * (ySize - 1) && spawnPoints[2] != null) {
+			spawnPoints [2].transform.position = cell.floorObject.transform.position;
+		}
 	}
 
 
@@ -234,6 +253,7 @@ public class MazeGenerator : MonoBehaviour {
 
 
 		CreateTraps ();
+        CreateObjects();
 	}
 
 	//////////////////////
@@ -246,8 +266,8 @@ public class MazeGenerator : MonoBehaviour {
 		traps = new int[Mathf.RoundToInt(xSize / 2) * trapAmountMultiplier];
 
 		for (int i = 0; i < traps.Length; i++) {
-
-			GameObject trapMarker = Instantiate (Resources.Load ("TrapMarker")) as GameObject;
+            
+            GameObject trapMarker = Instantiate (Resources.Load ("TrapMarker")) as GameObject;
 			GameObject trap = Instantiate (upDownTrap);
 
 			while (CheckExistingTraps (i) == false) {
@@ -258,9 +278,6 @@ public class MazeGenerator : MonoBehaviour {
 			TrapMechanic trapMechanic = trap.GetComponent<TrapMechanic>();
 			trapMechanic.TrapStepsOnSecond = Random.Range (8, 15);
 		}
-
-		mazeGenerated = true;
-
 	}
 
 	bool CheckExistingTraps(int index){
@@ -274,7 +291,42 @@ public class MazeGenerator : MonoBehaviour {
 		return true;
 	}
 
-	void BreakWall(){
+    //objects
+    void CreateObjects()
+    {
+        objects = new int[Mathf.RoundToInt(xSize) * objectMultiplier];
+        
+        for (int i = 0; i < objects.Length; i++)
+        {
+            Debug.Log(i);
+            GameObject objectMarker = Instantiate(Resources.Load("ObjectMarker")) as GameObject;
+            GameObject powerup = Instantiate(PowerUpObject);
+            while (CheckExistingObjects(i) == false)
+            {
+
+            }
+
+            objectMarker.transform.position = cells[objects[i]].north.transform.position;
+            powerup.transform.position = new Vector3 (cells[objects[i]].north.transform.position.x + 0.5f, 0.25f, cells[objects[i]].north.transform.position.z + 0.5f);
+            
+            
+        }
+    }
+    bool CheckExistingObjects(int index)
+    {
+        int randomCell = Random.Range(1, cells.Length);
+        for (int j = 0; j < objects.Length; j++)
+        {
+            if (objects[j] == randomCell)
+            {
+                return false;
+            }
+        }
+        objects[index] = randomCell;
+        return true;
+    }
+
+    void BreakWall(){
 		switch (wallToBreak) {
 		case 1:
 			Destroy (cells [currentCell].north);

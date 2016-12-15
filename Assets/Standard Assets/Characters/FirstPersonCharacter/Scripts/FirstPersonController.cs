@@ -5,10 +5,7 @@ using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 using UnityEngine.Networking;
 
-
-
 namespace UnityStandardAssets.Characters.FirstPerson
-
 {
 	[RequireComponent(typeof (CharacterController))]
 	[RequireComponent(typeof (AudioSource))]
@@ -16,8 +13,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 	{
 
 		[SerializeField] private bool m_IsWalking;
-		[SerializeField] private float m_WalkSpeed;
-		[SerializeField] private float m_RunSpeed;
+		[SerializeField] public float m_WalkSpeed;
+		[SerializeField] public float m_RunSpeed;
 		[SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
 		[SerializeField] private float m_JumpSpeed;
 		[SerializeField] private float m_StickToGroundForce;
@@ -41,8 +38,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public AudioClip m_GunFire;
         public AudioSource m_GunFireAudioSource;
 
-		public Vector3 spawnPosition;
-
 		private bool m_Jump;
 		private float m_YRotation;
 		private Vector2 m_Input;
@@ -54,9 +49,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		private float m_StepCycle;
 		private float m_NextStep;
 		private bool m_Jumping;
-
-	
-
+        private bool speedUpTime;
+        private float timer;
+        private float speedTime = 5f;
 
 
 		static bool init = false;
@@ -72,23 +67,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 		}
 
-		void Awake(){
-			transform.position += new Vector3 (1, 10, 0);
-
-			if (isServer) {
-				
-			} else {
-
-				//Debug.Log ("this is client");
-			}
-		}
-			
-
-
-
 		public void InitPlayer(){
 			m_Camera = transform.GetChild(0).GetComponent<Camera>();
-			AudioListener listener = transform.GetChild(0).GetComponent<AudioListener>();
 			if (isLocalPlayer && !init) {
 				Debug.Log ("player init");
 				m_CharacterController = GetComponent<CharacterController> ();
@@ -108,24 +88,27 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			}	
 			if (isLocalPlayer) {
 				m_Camera.enabled = true;
-				listener.enabled = true;
 			} else {
 				m_Camera.enabled = false;
-				listener.enabled = false;
 			}
-
 		}
-
-
-
 
 		// Update is called once per frame
 		private void Update()
 		{
-			
 			if (isLocalPlayer)
 			{
-
+                if (speedUpTime)
+                {
+                    timer += Time.deltaTime;
+                    if(timer > speedTime)
+                    {
+                        m_WalkSpeed = 1f;
+                        m_RunSpeed = 2f;
+                        speedUpTime = false;
+                        timer = 0f;
+                    }
+                }
 				if(Input.GetKeyDown(KeyCode.Mouse0))
 				{
 					Fire ();
@@ -153,7 +136,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				m_PreviouslyGrounded = m_CharacterController.isGrounded;
 
 			}
-
 		}
 
 		private void Fire() {
@@ -367,10 +349,23 @@ namespace UnityStandardAssets.Characters.FirstPerson
             Debug.Log("fire");
         }
 
+        void OnTriggerStay(Collider other)
+        {
+            if (other.gameObject.CompareTag("Pick Up"))
+            {
+                speedUpTime = true;
+                m_WalkSpeed = m_WalkSpeed * 2f;
+                m_RunSpeed = m_RunSpeed * 2f;
+            }
+
+            else if (other.gameObject.CompareTag("Finish"))
+            {
+                gameObject.SetActive(false);
+                Camera.main.gameObject.SetActive(true);
+            }
+
+        }
+
+
     }
-
-	
 }
-
-
-
