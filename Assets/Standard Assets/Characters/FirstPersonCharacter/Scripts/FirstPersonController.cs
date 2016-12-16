@@ -129,6 +129,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			
 			if (isLocalPlayer)
 			{
+				if (transform.position.y < -5) {
+					transform.position += new Vector3 (0, 10, 0);
+				}
 				if (speedUpTime)
 				{
 					timer += Time.deltaTime;
@@ -402,6 +405,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			{
 				gameObject.SetActive(false);
 				Camera.main.gameObject.SetActive(true);
+				Camera.main.GetComponent<AudioListener> ().enabled = true;
+				Camera.main.transform.position = new Vector3 (0, 15, -.6f);
+				Camera.main.transform.rotation = Quaternion.Euler (90, 0, 0);
 			}
 
 		}

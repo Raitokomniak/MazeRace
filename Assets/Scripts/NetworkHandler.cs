@@ -37,6 +37,9 @@ public class NetworkHandler : NetworkBehaviour {
 
 	public int playerCountStash =0;
 
+	[SyncVar(hook = "OnFinishedChanged")]
+	public int finishedPlayer = 0;
+
 	[SyncVar(hook = "OnSeedChanged")]
 	public int seed = 1337;
 
@@ -54,7 +57,9 @@ public class NetworkHandler : NetworkBehaviour {
 		
 	}
 
-
+	public void Finish(){
+		finishedPlayer = playerId;
+	}
 
 	void Update(){
 		int foundPlayers = GameObject.FindGameObjectsWithTag ("Player").Length;
@@ -163,6 +168,11 @@ public class NetworkHandler : NetworkBehaviour {
 			}
 
 		}
+	}
+
+	void OnFinishedChanged(int finishedPlayer)
+	{
+		GameControl.gameControl.ui.PlayToast ("Player " + finishedPlayer + " has found the exit!");
 	}
 
 

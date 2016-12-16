@@ -30,7 +30,7 @@ public class UIController : MonoBehaviour {
 		
 		gameSetupPanel.SetActive (false);
 		if (SceneManager.GetActiveScene ().name == "MazeLevel") {
-			startScreenPanel.SetActive (false);
+			
 		}
 	}
 
