@@ -17,12 +17,16 @@ public class TrapInteraction : MonoBehaviour {
 	
 	}
 
-    void OnTriggerStay(Collider other)
+    void OnTriggerEnter(Collider other)
     {
 
 
         if (other.gameObject.CompareTag("Trap"))
         {
+			var health = GetComponentInParent<Health> ();
+			if (health  != null) {
+				health.TakeDamage(10);
+			}
             rand = Random.Range(1, 3);
             Debug.Log(rand);
             if (!m_DamageAudio.isPlaying)
@@ -41,5 +45,6 @@ public class TrapInteraction : MonoBehaviour {
 
             //gameObject.SetActive(false);
         }
+
     }
 }
