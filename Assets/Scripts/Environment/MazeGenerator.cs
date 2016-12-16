@@ -52,6 +52,9 @@ public class MazeGenerator : MonoBehaviour {
 
 	public IEnumerator WaitForLoad(int index){
 		yield return new WaitUntil (() => SceneManager.GetActiveScene ().name == "MazeLevel");
+		GameControl.gameControl.ui.gameSetupPanel.SetActive (false);
+		GameControl.gameControl.ui.joinPanel.SetActive (false);
+		GameControl.gameControl.ui.lobbyPanel.SetActive (false);
 		StartGeneration ();
 		yield return new WaitUntil (() => mazeGenerated == true);
 		SetSpawnPoint (index);
@@ -59,11 +62,20 @@ public class MazeGenerator : MonoBehaviour {
 	}
 
 	public void StartGeneration(){
-		GameControl.gameControl.ui.ToggleGameSetup (false);
+		mazeGenerated = false;
+		GameControl.gameControl.ui.startScreenPanel.SetActive (false);
 		Random.InitState (seed);
 		spawnPoints = new GameObject[3];
 		CreateWalls ();
 	}
+
+	//This was for creating the start screen maze prefab
+	public void StartScreenGeneration(){
+		xSize = 30;
+		ySize = 30;
+		StartGeneration ();
+	}
+
 
 
 

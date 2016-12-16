@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using UnityEngine.SceneManagement;
 public class GameControl : MonoBehaviour {
 
 	//Kaikki erilliset kontrollit liitetään tähän luokkaan ja niitä voi sitten kutsua gameControl objektin kautta
@@ -22,4 +22,10 @@ public class GameControl : MonoBehaviour {
 		maze = GetComponent<MazeGenerator> ();
 	}
 
+
+	public void StartGame(){
+		SceneManager.LoadScene ("GameSetupScene");
+		ui.lobbyPanel.SetActive (true);
+		ui.startScreenPanel.SetActive (false);
+	}
 }

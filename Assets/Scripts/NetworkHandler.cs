@@ -87,6 +87,31 @@ public class NetworkHandler : NetworkBehaviour {
 	}
 
 
+	public void StartHosting(){
+		netManager.StartHost();
+	}
+
+	public void JoinGame(){
+		netManager.StartClient();
+		netManager.networkAddress = GameControl.gameControl.ui.IPInput.text;
+
+	}
+
+	void OnGUI(){
+		if (NetworkClient.active && !ClientScene.ready)
+		{
+			if (GUI.Button(new Rect(100, 100, 200, 20), "Client Ready"))
+			{
+				ClientScene.Ready(netManager.client.connection);
+
+				if (ClientScene.localPlayers.Count == 0)
+				{
+					ClientScene.AddPlayer(0);
+				}
+			}
+		}
+	}
+
 	/////////////////////
 	/// MAP INFO
 	/////////////////////
