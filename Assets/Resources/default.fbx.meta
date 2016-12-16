@@ -1,0 +1,278 @@
+fileFormatVersion: 2
+guid: 231d536c07582bd458bdcfb5e6b38e4a
+timeCreated: 1481884423
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Armature.001
+    100002: ArmLower.L
+    100004: ArmLower.R
+    100006: ArmUpper.L
+    100008: ArmUpper.R
+    100010: Camera
+    100012: Chest
+    100014: Cube
+    100016: //RootNode
+    100018: FingerFour1.L
+    100020: FingerFour1.R
+    100022: FingerFour2.L
+    100024: FingerFour2.R
+    100026: FingerFour3.L
+    100028: FingerFour3.L_end
+    100030: FingerFour3.R
+    100032: FingerFour3.R_end
+    100034: FingerOne1.L
+    100036: FingerOne1.R
+    100038: FingerOne2.L
+    100040: FingerOne2.R
+    100042: FingerOne3.L
+    100044: FingerOne3.L_end
+    100046: FingerOne3.R
+    100048: FingerOne3.R_end
+    100050: FingerThree1.L
+    100052: FingerThree1.R
+    100054: FingerThree2.L
+    100056: FingerThree2.R
+    100058: FingerThree3.L
+    100060: FingerThree3.L_end
+    100062: FingerThree3.R
+    100064: FingerThree3.R_end
+    100066: FingerTwo1.L
+    100068: FingerTwo1.R
+    100070: FingerTwo2.L
+    100072: FingerTwo2.L.001
+    100074: FingerTwo2.L.001_end
+    100076: FingerTwo2.R
+    100078: FingerTwo2.R.001
+    100080: FingerTwo2.R.001_end
+    100082: Foot Roll.L
+    100084: Foot Roll.R
+    100086: Foot.L
+    100088: Foot.R
+    100090: HandBase.L
+    100092: HandBase.R
+    100094: Head
+    100096: Head_end
+    100098: Leg control.L
+    100100: Leg control.R
+    100102: Leg ik.L
+    100104: Leg ik.L_end
+    100106: Leg ik.R
+    100108: Leg ik.R_end
+    100110: Leg pole target.L
+    100112: Leg pole target.L_end
+    100114: Leg pole target.R
+    100116: Leg pole target.R_end
+    100118: LegUpper.L
+    100120: LegUpper.R
+    100122: LowerLeg.L
+    100124: LowerLeg.L_end
+    100126: LowerLeg.R
+    100128: LowerLeg.R_end
+    100130: Neck
+    100132: Root
+    100134: Thumb1.L
+    100136: Thumb1.R
+    100138: Thumb2.L
+    100140: Thumb2.R
+    100142: Thumb3.L
+    100144: Thumb3.L_end
+    100146: Thumb3.R
+    100148: Thumb3.R_end
+    100150: ThumbBase.L
+    100152: ThumbBase.R
+    100154: Toes control.L
+    100156: Toes control.L_end
+    100158: Toes control.R
+    100160: Toes control.R_end
+    100162: Toes.L
+    100164: Toes.L_end
+    100166: Toes.R
+    100168: Toes.R_end
+    100170: TorsoLower
+    100172: TorsoUpper
+    400000: Armature.001
+    400002: ArmLower.L
+    400004: ArmLower.R
+    400006: ArmUpper.L
+    400008: ArmUpper.R
+    400010: Camera
+    400012: Chest
+    400014: Cube
+    400016: //RootNode
+    400018: FingerFour1.L
+    400020: FingerFour1.R
+    400022: FingerFour2.L
+    400024: FingerFour2.R
+    400026: FingerFour3.L
+    400028: FingerFour3.L_end
+    400030: FingerFour3.R
+    400032: FingerFour3.R_end
+    400034: FingerOne1.L
+    400036: FingerOne1.R
+    400038: FingerOne2.L
+    400040: FingerOne2.R
+    400042: FingerOne3.L
+    400044: FingerOne3.L_end
+    400046: FingerOne3.R
+    400048: FingerOne3.R_end
+    400050: FingerThree1.L
+    400052: FingerThree1.R
+    400054: FingerThree2.L
+    400056: FingerThree2.R
+    400058: FingerThree3.L
+    400060: FingerThree3.L_end
+    400062: FingerThree3.R
+    400064: FingerThree3.R_end
+    400066: FingerTwo1.L
+    400068: FingerTwo1.R
+    400070: FingerTwo2.L
+    400072: FingerTwo2.L.001
+    400074: FingerTwo2.L.001_end
+    400076: FingerTwo2.R
+    400078: FingerTwo2.R.001
+    400080: FingerTwo2.R.001_end
+    400082: Foot Roll.L
+    400084: Foot Roll.R
+    400086: Foot.L
+    400088: Foot.R
+    400090: HandBase.L
+    400092: HandBase.R
+    400094: Head
+    400096: Head_end
+    400098: Leg control.L
+    400100: Leg control.R
+    400102: Leg ik.L
+    400104: Leg ik.L_end
+    400106: Leg ik.R
+    400108: Leg ik.R_end
+    400110: Leg pole target.L
+    400112: Leg pole target.L_end
+    400114: Leg pole target.R
+    400116: Leg pole target.R_end
+    400118: LegUpper.L
+    400120: LegUpper.R
+    400122: LowerLeg.L
+    400124: LowerLeg.L_end
+    400126: LowerLeg.R
+    400128: LowerLeg.R_end
+    400130: Neck
+    400132: Root
+    400134: Thumb1.L
+    400136: Thumb1.R
+    400138: Thumb2.L
+    400140: Thumb2.R
+    400142: Thumb3.L
+    400144: Thumb3.L_end
+    400146: Thumb3.R
+    400148: Thumb3.R_end
+    400150: ThumbBase.L
+    400152: ThumbBase.R
+    400154: Toes control.L
+    400156: Toes control.L_end
+    400158: Toes control.R
+    400160: Toes control.R_end
+    400162: Toes.L
+    400164: Toes.L_end
+    400166: Toes.R
+    400168: Toes.R_end
+    400170: TorsoLower
+    400172: TorsoUpper
+    4300000: Cube
+    7400000: Armature.001|BackDash
+    7400002: Armature.001|Close_HeavyKick
+    7400004: Armature.001|Close_HeavyPunch
+    7400006: Armature.001|Crouch
+    7400008: Armature.001|Crouch_HeavyKick
+    7400010: Armature.001|Crouch_HeavyPunch
+    7400012: Armature.001|Crouch_LightKick
+    7400014: Armature.001|Crouch_LightPunch
+    7400016: Armature.001|Crouch_Sweep
+    7400018: Armature.001|ForwardDash
+    7400020: Armature.001|HeavyKick
+    7400022: Armature.001|HeavyPunch
+    7400024: Armature.001|HitStun_Crouch
+    7400026: Armature.001|HitStun_High
+    7400028: Armature.001|HitStun_Low
+    7400030: Armature.001|Idle
+    7400032: Armature.001|Jump_Backward
+    7400034: Armature.001|Jump_Forward
+    7400036: Armature.001|Jump_HeavyKick
+    7400038: Armature.001|Jump_HeavyPunch
+    7400040: Armature.001|Jump_LightKick
+    7400042: Armature.001|Jump_LightPunch
+    7400044: Armature.001|Jump_Neutral
+    7400046: Armature.001|LightKick
+    7400048: Armature.001|LightPunch
+    7400050: Armature.001|Overhead
+    7400052: Armature.001|Parry_Crouch
+    7400054: Armature.001|Parry_High
+    7400056: Armature.001|Walk
+    7400058: Cube|HitStun_Low
+    9500000: //RootNode
+    13700000: Cube
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

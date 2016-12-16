@@ -44,6 +44,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
 		public Vector3 spawnPosition;
 
+		public GameObject model;
+
 		private bool m_Jump;
 		private float m_YRotation;
 		private Vector2 m_Input;
@@ -56,6 +58,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		private float m_NextStep;
 		private bool m_Jumping;
 
+		private bool speedUpTime;
+		private float timer;
+		private float speedTime = 5f;
 	
 
 
@@ -76,18 +81,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		void Awake(){
 			transform.position += new Vector3 (1, 10, 0);
 
-			if (isServer) {
-				
-			} else {
 
-				//Debug.Log ("this is client");
-			}
 		}
 			
 
 
 
 		public void InitPlayer(){
+
 			m_Camera = transform.GetChild(0).GetComponent<Camera>();
 			AudioListener listener = transform.GetChild(0).GetComponent<AudioListener>();
 			if (isLocalPlayer && !init) {
@@ -110,9 +111,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			if (isLocalPlayer) {
 				m_Camera.enabled = true;
 				listener.enabled = true;
+				model.SetActive (false);
 			} else {
 				m_Camera.enabled = false;
 				listener.enabled = false;
+				model.SetActive (true);
 			}
 
 		}
@@ -126,6 +129,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			
 			if (isLocalPlayer)
 			{
+				if (speedUpTime)
+				{
+					timer += Time.deltaTime;
+					if(timer > speedTime)
+					{
+						m_WalkSpeed = 1f;
+						m_RunSpeed = 2f;
+						speedUpTime = false;
+						timer = 0f;
+					}
+				}
 
 				if(Input.GetKeyDown(KeyCode.Mouse0))
 				{
@@ -164,7 +178,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
 					bulletPrefab,
 					bulletSpawn.position,
 					bulletSpawn.rotation);
-				bullet.GetComponent<Rigidbody>().velocity = bulletSpawn.transform.forward * 6;
+				//bullet.GetComponent<Rigidbody>().velocity = bulletSpawn.transform.forward * 6;
+				bullet.GetComponent<Rigidbody>().velocity = bulletSpawn.transform.up * -6;
 				PlayShootSound ();
 				NetworkServer.Spawn(bullet);
 				Destroy(bullet, 2.0f);
@@ -373,9 +388,28 @@ namespace UnityStandardAssets.Characters.FirstPerson
             Debug.Log("fire");
         }
 
+
+		void OnTriggerStay(Collider other)
+		{
+			if (other.gameObject.CompareTag("Pick Up"))
+			{
+				speedUpTime = true;
+				m_WalkSpeed = m_WalkSpeed * 2f;
+				m_RunSpeed = m_RunSpeed * 2f;
+			}
+
+			else if (other.gameObject.CompareTag("Finish"))
+			{
+				gameObject.SetActive(false);
+				Camera.main.gameObject.SetActive(true);
+			}
+
+		}
+
     }
 
-	
+
+
 }
 
 

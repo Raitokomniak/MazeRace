@@ -13,6 +13,8 @@ public class MazeGenerator : MonoBehaviour {
 	static bool seedGeneratorInit = false;
 	public int playerCount;
 
+	int networkIndex;
+
 	public GameObject wall;
 	public GameObject floorTile;
 	GameObject floorHolder;
@@ -24,6 +26,10 @@ public class MazeGenerator : MonoBehaviour {
 
 	//TRAps
 	public GameObject upDownTrap;
+
+	public GameObject FinishObject;
+	public GameObject PowerUpObject;
+
 
 	Vector3 initialPos;
 	GameObject wallHolder;
@@ -39,7 +45,8 @@ public class MazeGenerator : MonoBehaviour {
 
 	public int trapAmountMultiplier;
 	int[] traps;
-
+	public int objectMultiplier;
+	int[] objects;
 	bool init = false;
 	public bool mazeGenerated;
 
@@ -77,7 +84,10 @@ public class MazeGenerator : MonoBehaviour {
 		
 		players [index - 1].transform.position = GameObject.Find ("SpawnPoint" + index).transform.position + offSet;
 	}
-		
+
+	public void ReSpawn(){
+		SetSpawnPoint (networkIndex);
+	}
 
 
 	public void GenerateSeed(){
@@ -118,6 +128,8 @@ public class MazeGenerator : MonoBehaviour {
 
 				if (j == 0 && !exit) {
 					GameObject exitMarker = Instantiate (Resources.Load ("ExitMarker"), tempWall.transform.position, Quaternion.identity) as GameObject;
+					GameObject finish = Instantiate(FinishObject);
+					finish.transform.position = new Vector3(exitMarker.transform.position.x, 0.25f, exitMarker.transform.position.z);
 					Destroy (tempWall);
 					exit = true;
 				}
@@ -234,6 +246,7 @@ public class MazeGenerator : MonoBehaviour {
 
 
 		CreateTraps ();
+		CreateObjects ();
 	}
 
 	//////////////////////
@@ -273,6 +286,43 @@ public class MazeGenerator : MonoBehaviour {
 		traps [index] = randomCell;
 		return true;
 	}
+
+
+	//objects
+	void CreateObjects()
+	{
+		objects = new int[Mathf.RoundToInt(xSize) * objectMultiplier];
+
+		for (int i = 0; i < objects.Length; i++)
+		{
+			Debug.Log(i);
+			GameObject objectMarker = Instantiate(Resources.Load("ObjectMarker")) as GameObject;
+			GameObject powerup = Instantiate(PowerUpObject);
+			while (CheckExistingObjects(i) == false)
+			{
+
+			}
+
+			objectMarker.transform.position = cells[objects[i]].north.transform.position;
+			powerup.transform.position = new Vector3 (cells[objects[i]].north.transform.position.x + 0.5f, 0.25f, cells[objects[i]].north.transform.position.z + 0.5f);
+
+
+		}
+	}
+	bool CheckExistingObjects(int index)
+	{
+		int randomCell = Random.Range(1, cells.Length);
+		for (int j = 0; j < objects.Length; j++)
+		{
+			if (objects[j] == randomCell)
+			{
+				return false;
+			}
+		}
+		objects[index] = randomCell;
+		return true;
+	}
+
 
 	void BreakWall(){
 		switch (wallToBreak) {

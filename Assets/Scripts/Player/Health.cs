@@ -9,6 +9,7 @@ public class Health : NetworkBehaviour {
 	[SyncVar(hook = "OnChangedHealth")]
 	public int currentHealth = maxHealth;
 	public RectTransform healthbar;
+	public NetworkHandler networkHandler;
 
 	public void TakeDamage(int amount)
 	{
@@ -37,6 +38,11 @@ public class Health : NetworkBehaviour {
 		{
 			//set actual spawn position here
 			transform.position = Vector3.zero;
+//			transform.position = GameObject.Find ("SpawnPoint" + networkHandler.playerId).transform.position;
+
+
+			//GameControl.gameControl.maze.ReSpawn ();
+
 		}
 	}
 }

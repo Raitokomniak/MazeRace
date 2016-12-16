@@ -4,7 +4,7 @@ using System.Collections;
 public class BulletBehaviour : MonoBehaviour {
 
 	void Awake() {
-		
+		//GetComponent<Rigidbody>().velocity = bulletSpawn.transform.up * -6;
 	}
 
 	void OnCollisionEnter(Collision c) {
@@ -13,6 +13,7 @@ public class BulletBehaviour : MonoBehaviour {
 		if (health  != null) {
 			health.TakeDamage(10);
 		}
+		Debug.Log ("collided with " + c.gameObject.name);
 		Destroy (this.gameObject);
 	}
 }
