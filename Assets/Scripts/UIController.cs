@@ -9,6 +9,7 @@ public class UIController : MonoBehaviour {
 	public GameObject startScreenPanel;
 	public  GameObject joinPanel;
 	public GameObject lobbyPanel;
+	public GameObject crossHair;
 
 	public InputField IPInput;
 	public InputField seedInput;
@@ -30,7 +31,9 @@ public class UIController : MonoBehaviour {
 		
 		gameSetupPanel.SetActive (false);
 		if (SceneManager.GetActiveScene ().name == "MazeLevel") {
-			
+			crossHair.SetActive (true);
+		} else {
+			crossHair.SetActive (false);
 		}
 	}
 
@@ -38,14 +41,18 @@ public class UIController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		
+		if (SceneManager.GetActiveScene ().name == "GameSetupScene" && Input.GetKeyDown ("escape")) {
+			SceneManager.LoadScene ("StartScreen");
+			lobbyPanel.SetActive (false);
+			startScreenPanel.SetActive (true);
+		}
 	}
 
 	public void ToggleGameSetup(bool value)
 	{
 		Debug.Log ("toggle game setup " + value);
 		gameSetupPanel.SetActive (value);
-
+		GameControl.gameControl.maze.GenerateSeed ();
 		if (value == true) {
 			//seedInput. = GameControl.gameControl.maze.seed.ToString();
 			if (GameControl.gameControl != null) {
@@ -77,10 +84,16 @@ public class UIController : MonoBehaviour {
 	}
 	//Update maze size to match input fields
 	public void UpdateSizes(){
-		/*if (int.Parse (sizeXInput.text) < 10)
-			sizeXInput.text = "10";
-		if (int.Parse (sizeYInput.text) < 10)
-			sizeYInput.text = "10";*/
+		if (int.Parse (sizeXInput.text) < 5)
+			sizeXInput.text = "5";
+		if (int.Parse (sizeYInput.text) < 5)
+			sizeYInput.text = "5";
+		if (int.Parse (sizeXInput.text) > 30) {
+			sizeXInput.text = "30";
+		}
+		if (int.Parse (sizeYInput.text) > 30) {
+			sizeYInput.text = "30";
+		}
 	}
 
 	//Update input field after generation

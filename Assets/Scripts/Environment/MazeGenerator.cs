@@ -65,6 +65,8 @@ public class MazeGenerator : MonoBehaviour {
 		mazeGenerated = false;
 		GameControl.gameControl.ui.startScreenPanel.SetActive (false);
 		Random.InitState (seed);
+		xSize = int.Parse (GameControl.gameControl.ui.sizeXInput.text);
+		ySize = int.Parse (GameControl.gameControl.ui.sizeYInput.text);
 		spawnPoints = new GameObject[3];
 		CreateWalls ();
 	}
